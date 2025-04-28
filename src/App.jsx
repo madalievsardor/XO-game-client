@@ -115,7 +115,7 @@ function App() {
 
       {winner && (
         <div className="text-xl font-bold mt-2">
-          {winner === "draw" ? "🤝 Draw!" : `🎉 ${username} wins!`}
+          {winner === "draw" ? "🤝 Draw!" : `🎉 ${winner} wins!`}
         </div>
       )}
 
