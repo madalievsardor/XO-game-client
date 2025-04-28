@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
 import Board from "./components/Board";  // Board component
-const socket = io("http://localhost:3000");
+const socket = io("https://xo-game-server-2.onrender.com");
 
 function App() {
   const [username, setUsername] = useState("");
@@ -115,7 +115,7 @@ function App() {
 
       {winner && (
         <div className="text-xl font-bold mt-2">
-          {winner === "draw" ? "🤝 Draw!" : `🎉 ${winner} wins!`}
+          {winner === "draw" ? "🤝 Draw!" : `🎉 ${username} wins!`}
         </div>
       )}
 
