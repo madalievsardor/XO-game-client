@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
-import Board from "./components/Board";  // Board component
+import Board from "./components/Board";
+
 const socket = io("https://xo-game-server-2.onrender.com");
 
 function App() {
@@ -14,12 +15,14 @@ function App() {
   const [players, setPlayers] = useState([]);
   const [error, setError] = useState("");
   const [start, setStart] = useState(false);
+  const [roomsList, setRoomsList] = useState([]);
 
   useEffect(() => {
     socket.on("init", ({ symbol, board }) => {
       setSymbol(symbol);
       setBoard(board);
       setJoined(true);
+
     });
 
     socket.on("board_update", ({ board, turn, winner }) => {
@@ -39,6 +42,13 @@ function App() {
     socket.on("start_game", () => {
       setStart(true);
     });
+
+    socket.on("rooms_list", (availableRooms) => {
+      setRoomsList(availableRooms);
+    });
+
+    // Har doim ochilganda xonalar ro'yxatini chaqamiz
+    socket.emit("get_rooms");
   }, []);
 
   const handleJoin = () => {
@@ -89,6 +99,19 @@ function App() {
           <button className="btn btn-secondary" onClick={handleCreateRoom}>Create Room</button>
         </div>
         {error && <p className="text-red-500">{error}</p>}
+
+        <div className="mt-4">
+          <h2 className="text-lg font-bold">Available Rooms:</h2>
+          <ul className="list-disc list-inside">
+            {roomsList.length === 0 && <p>No available rooms</p>}
+            {roomsList.map((id) => (
+              <li key={id}>
+                {id} 
+                <button className="ml-2 btn btn-xs btn-outline" onClick={() => setRoomId(id)}>Join</button>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     );
   }
