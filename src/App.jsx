@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import io from "socket.io-client";
 import Board from "./components/Board";
 
-const socket = io("https://xo-game-server-2.onrender.com");
+const socket = io("https://xo-game-client-1.onrender.com/");
 
 function App() {
   const [username, setUsername] = useState("");
@@ -22,7 +22,6 @@ function App() {
       setSymbol(symbol);
       setBoard(board);
       setJoined(true);
-
     });
 
     socket.on("board_update", ({ board, turn, winner }) => {
@@ -39,15 +38,15 @@ function App() {
       setError(message);
     });
 
-    socket.on("start_game", () => {
-      setStart(true);
+    socket.on("start_game", ({ start, players }) => {
+      setStart(start);
+      setPlayers(players);
     });
 
     socket.on("rooms_list", (availableRooms) => {
       setRoomsList(availableRooms);
     });
 
-    // Har doim ochilganda xonalar ro'yxatini chaqamiz
     socket.emit("get_rooms");
   }, []);
 
@@ -121,7 +120,7 @@ function App() {
       <div className="flex flex-col items-center justify-center min-h-screen gap-4">
         <h1 className="text-2xl font-bold">Waiting for another player...</h1>
         <p>Room ID: <b>{roomId}</b></p>
-        <p>Players in room: {players.map(p => p.username).join(", ")}</p>
+        <p>Players: {players.map(p => `${p.username} (${p.symbol})`).join(" & ")}</p>
       </div>
     );
   }
@@ -144,7 +143,7 @@ function App() {
 
       <button className="btn btn-outline mt-4" onClick={restart}>🔁 Restart</button>
 
-      <div className="text-sm text-gray-400">
+      <div className="text-sm text-base-content">
         Players: {players.map(p => `${p.username} (${p.symbol})`).join(" & ")}
       </div>
     </div>
